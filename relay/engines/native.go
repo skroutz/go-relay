@@ -2,6 +2,8 @@ package engines
 
 import (
 	"errors"
+	"fmt"
+	"net"
 	"github.com/operable/circuit"
 	"github.com/operable/go-relay/relay/config"
 )
@@ -32,6 +34,12 @@ func (ne *NativeEngine) Init() error {
 
 // IsAvailable required by engines.Engine interface
 func (ne *NativeEngine) IsAvailable(name string, version string) (bool, error) {
+	conn, err := net.Dial("tcp", "127.0.0.1:4242")
+	if err != nil {
+		return false, err
+	}
+	defer conn.Close()
+	fmt.Fprintf(conn, "%s:%s\n", name, version)
 	return true, nil
 }
 
